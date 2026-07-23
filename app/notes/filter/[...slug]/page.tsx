@@ -8,25 +8,37 @@ import { fetchNotes } from '@/lib/api';
 
 import NotesClient from './Notes.client';
 
-export const dynamic = 'force-dynamic';
+interface NotesPageProps {
+  params: Promise<{
+    slug: string[];
+  }>;
+}
 
-const Notes = async () => {
+const NotesPage = async ({ params }: NotesPageProps) => {
+  const { slug } = await params;
+
+  const currentTag = slug[0];
+  const tag = currentTag === 'all' ? undefined : currentTag;
+
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ['notes', 1, ''],
+    queryKey: ['notes', 1, '', tag],
     queryFn: () =>
       fetchNotes({
         page: 1,
         search: '',
+        tag,
       }),
   });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <NotesClient />
+      <NotesClient tag={tag} />
     </HydrationBoundary>
   );
 };
 
-export default Notes;
+export default NotesPage;
+
+export const dynamic = 'force-dynamic';
