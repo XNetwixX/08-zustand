@@ -2,12 +2,12 @@ import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
-} from '@tanstack/react-query';
-import type { Metadata } from 'next';
+} from "@tanstack/react-query";
+import type { Metadata } from "next";
 
-import { fetchNoteById } from '@/lib/api';
+import { fetchNoteById } from "@/lib/api";
 
-import NoteDetailsClient from './NoteDetails.client';
+import NoteDetailsClient from "./NoteDetails.client";
 
 interface NoteDetailsProps {
   params: Promise<{
@@ -30,10 +30,10 @@ export const generateMetadata = async ({
     openGraph: {
       title: note.title,
       description,
-      url: `https://notehub.com/notes/${id}`,
+      url: `https://08-zustand-psi-sandy.vercel.app/notes/${id}`,
       images: [
         {
-          url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
+          url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
           width: 1200,
           height: 630,
           alt: `${note.title} | NoteHub`,
@@ -49,7 +49,7 @@ const NoteDetails = async ({ params }: NoteDetailsProps) => {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ['note', id],
+    queryKey: ["note", id],
     queryFn: () => fetchNoteById(id),
   });
 
@@ -62,4 +62,4 @@ const NoteDetails = async ({ params }: NoteDetailsProps) => {
 
 export default NoteDetails;
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
