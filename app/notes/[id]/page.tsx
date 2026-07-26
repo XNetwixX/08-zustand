@@ -3,6 +3,7 @@ import {
   HydrationBoundary,
   QueryClient,
 } from '@tanstack/react-query';
+import type { Metadata } from 'next';
 
 import { fetchNoteById } from '@/lib/api';
 
@@ -13,6 +14,34 @@ interface NoteDetailsProps {
     id: string;
   }>;
 }
+
+export const generateMetadata = async ({
+  params,
+}: NoteDetailsProps): Promise<Metadata> => {
+  const { id } = await params;
+
+  const note = await fetchNoteById(id);
+
+  const description = `${note.content.slice(0, 100)}...`;
+
+  return {
+    title: note.title,
+    description,
+    openGraph: {
+      title: note.title,
+      description,
+      url: `https://notehub.com/notes/${id}`,
+      images: [
+        {
+          url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
+          width: 1200,
+          height: 630,
+          alt: `${note.title} | NoteHub`,
+        },
+      ],
+    },
+  };
+};
 
 const NoteDetails = async ({ params }: NoteDetailsProps) => {
   const { id } = await params;
@@ -32,3 +61,5 @@ const NoteDetails = async ({ params }: NoteDetailsProps) => {
 };
 
 export default NoteDetails;
+
+export const dynamic = 'force-dynamic';

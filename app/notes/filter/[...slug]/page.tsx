@@ -3,6 +3,7 @@ import {
   HydrationBoundary,
   QueryClient,
 } from '@tanstack/react-query';
+import type { Metadata } from 'next';
 
 import { fetchNotes } from '@/lib/api';
 
@@ -13,6 +14,41 @@ interface NotesPageProps {
     slug: string[];
   }>;
 }
+
+const ogImage = {
+  url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
+  width: 1200,
+  height: 630,
+  alt: 'NoteHub application preview',
+};
+
+export const generateMetadata = async ({
+  params,
+}: NotesPageProps): Promise<Metadata> => {
+  const { slug } = await params;
+
+  const currentTag = slug[0];
+  const isAllNotes = currentTag.toLowerCase() === 'all';
+
+  const title = isAllNotes
+    ? 'Notes - All Tags | NoteHub'
+    : `Notes - ${currentTag} | NoteHub`;
+
+  const description = isAllNotes
+    ? 'Browse all notes in NoteHub.'
+    : `Browse notes filtered by the ${currentTag} tag.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `https://notehub.com/notes/filter/${currentTag}`,
+      images: [ogImage],
+    },
+  };
+};
 
 const NotesPage = async ({ params }: NotesPageProps) => {
   const { slug } = await params;
